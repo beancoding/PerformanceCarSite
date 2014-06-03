@@ -28,7 +28,7 @@ app.factory('TreeFactory',function(){
 							    	
 							    	if(!node.original)
 							    		node.original = {level:'none'};
-							    	return root + '/makes/getall/' + node.original.level;
+							    	return root + '/makes/getall/' + node.original.level + '?parent=' + node.parent;
 							    },
 							    'data' : function (node) {
 							    	return { 'id' : node.id };
@@ -39,10 +39,9 @@ app.factory('TreeFactory',function(){
 							    		
 							    		d.text = d.label;
 							    		d.id = d.label;
-							    		var isFile = d.level === "model";
+							    		var isFile = d.level === "Model";
 							    		d.children = !isFile;
 							    		d.type = isFile ? "file" : "default";
-							    		d.leaf = d.level;
 							    		i++;
 							    	});
 							    	return data;

@@ -5,10 +5,10 @@ import static ch.lambdaj.Lambda.project;
 import static com.dmcliver.performancecars.Constants.addMake;
 import static com.dmcliver.performancecars.StringExtras.equalIgnoreCase;
 import static com.dmcliver.performancecars.StringExtras.isNullOrEmpty;
+import static java.util.Arrays.asList;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -51,14 +51,18 @@ public class MakeController {
 	 * JSON response to return all the car makes
 	 */
 	@RequestMapping(value = "/getall/{level}", method = GET)
-	public @ResponseBody List<?> getAll(@PathVariable("level") String level, @RequestParam("id") String id) {
+	public @ResponseBody List<?> getAll(@PathVariable("level") String level, @RequestParam("id") String id, @RequestParam("parent") String parent) {
 		
-		if(!equalIgnoreCase("none", level)) 
-			return new ArrayList<Object>(1);
+		if(equalIgnoreCase("none", level)) {
 
-		List<?> makes = makeDAO.findAll();
-		List<TreeModel> models = project(makes, TreeModel.class, on(Make.class).getName(), on(Make.class).toString());
-		return models;
+			List<?> makes = makeDAO.findAll();
+			List<TreeModel> models = project(makes, TreeModel.class, on(Make.class).getName(), on(Make.class).toString());
+			return models;
+		}
+		else if(equalIgnoreCase("make", level))
+			return asList(new TreeModel("1979" + id, "Year"));
+		else
+			return asList(new TreeModel("Golf" + id + parent, "Model"));
 	}
 	
 	@RequestMapping(value = "/add", method = GET)

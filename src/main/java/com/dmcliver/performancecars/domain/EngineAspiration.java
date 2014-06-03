@@ -13,3 +13,4 @@ public enum EngineAspiration {
 	@Tag("Twin Turbo")
 	twinTurbo
 }
+

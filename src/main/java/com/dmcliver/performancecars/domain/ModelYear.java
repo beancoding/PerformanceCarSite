@@ -10,13 +10,15 @@ import javax.persistence.Table;
 @Table(name = "ModelYear")
 public class ModelYear {
 
+	private Make make;
 	private Model model;
 	private ModelYearPK modelYearPK;
 	
-	public ModelYear(Model model, ModelYearPK modelYearPK) {
+	public ModelYear(Model model, ModelYearPK modelYearPK, Make make) {
 		
 		this.model = model;
 		this.modelYearPK = modelYearPK;
+		this.make = make;
 	}
 	
 	public ModelYear() {}
@@ -36,5 +38,14 @@ public class ModelYear {
 	}
 	public void setModelYearPK(ModelYearPK modelYearPK) {
 		this.modelYearPK = modelYearPK;
+	}
+
+	@ManyToOne
+	@JoinColumn(name = "MakeId", nullable = false)
+	public Make getMake() {
+		return make;
+	}
+	public void setMake(Make make) {
+		this.make = make;
 	}
 }

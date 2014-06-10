@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.springframework.ui.Model;
 
-import com.dmcliver.performancecars.LoggerBuilder;
+import com.dmcliver.performancecars.builders.LoggerBuilder;
 import com.dmcliver.performancecars.controllers.HomeController;
 
 public class HomeControllerTest {

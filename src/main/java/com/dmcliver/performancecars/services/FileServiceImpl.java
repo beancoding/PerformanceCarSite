@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dmcliver.performancecars.FileUtilities;
-import com.dmcliver.performancecars.LoggerBuilder;
+import com.dmcliver.performancecars.builders.LoggerBuilder;
 
 @Service
 public class FileServiceImpl implements FileService {

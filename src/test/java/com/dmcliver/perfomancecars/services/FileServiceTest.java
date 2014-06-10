@@ -13,7 +13,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dmcliver.performancecars.FileUtilities;
-import com.dmcliver.performancecars.LoggerBuilder;
+import com.dmcliver.performancecars.builders.LoggerBuilder;
 import com.dmcliver.performancecars.services.FileServiceImpl;
 
 @RunWith(MockitoJUnitRunner.class)

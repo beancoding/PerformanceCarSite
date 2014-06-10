@@ -1,4 +1,4 @@
-package com.dmcliver.performancecars;
+package com.dmcliver.performancecars.springcfg;
 
 import java.beans.PropertyVetoException;
 import java.util.Properties;

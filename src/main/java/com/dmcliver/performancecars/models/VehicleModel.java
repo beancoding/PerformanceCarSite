@@ -2,20 +2,25 @@ package com.dmcliver.performancecars.models;
 
 import java.math.BigDecimal;
 
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.Range;
 
 public class VehicleModel {
 	
 	private String modelName;
 	private BigDecimal engineSize;
+
 	private String engineType;
 	private String engineAspiration;
 	private BigDecimal quarterMileTime;
 	private BigDecimal timeToOneHundred;
-	private String make;
 	private int century = 20;
 	private int decade = 1;
 	private int year = 1;
+	private boolean useExistingModel = true;
+	private String selectedMake;
 	
 	@NotBlank(message = "*The model name cannot be blank")
 	public String getModelName() {
@@ -25,6 +30,8 @@ public class VehicleModel {
 		this.modelName = name;
 	}
 	
+	@NotNull(message = "*Please enter a size for the engine")
+	@Range(message = "*Please enter a valid engine size", min = 1)
 	public BigDecimal getEngineSize() {
 		return engineSize;
 	}
@@ -59,13 +66,6 @@ public class VehicleModel {
 	public void setTimeToOneHundred(BigDecimal timeToOneHundred) {
 		this.timeToOneHundred = timeToOneHundred;
 	}
-	
-	public String getMake() {
-		return make;
-	}
-	public void setMake(String make) {
-		this.make = make;
-	}
 
 	public int getCentury() {
 		return century;
@@ -86,5 +86,19 @@ public class VehicleModel {
 	}
 	public void setYear(int year) {
 		this.year = year;
+	}
+	
+	public boolean isUseExistingModel() {
+		return useExistingModel;
+	}
+	public void setUseExistingModel(boolean useExistingModel) {
+		this.useExistingModel = useExistingModel;
+	}
+	
+	public String getSelectedMake() {
+		return selectedMake;
+	}
+	public void setSelectedMake(String selectedMake) {
+		this.selectedMake = selectedMake;
 	}
 }

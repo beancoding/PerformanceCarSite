@@ -6,20 +6,21 @@ import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dmcliver.performancecars.domain.Model;
+import com.dmcliver.performancecars.domain.ModelYear;
 
 @Repository
-public class ModelDAOImpl implements ModelDAO {
+public class ModelDAOImpl extends HibernateTemplateDAO<Model> implements ModelDAO {
 
 	private SessionFactory factory;
 	
 	@Autowired
 	public ModelDAOImpl(SessionFactory factory) {
+		super(factory, Model.class);
 		this.factory = factory;
 	}
 
@@ -34,5 +35,27 @@ public class ModelDAOImpl implements ModelDAO {
 					  .createAlias("make", "mk")
 					  .add(eq("mk.name", makeName))
 					  .list();
+	}
+
+	@Override
+	@Transactional
+	public void save(Model model) {
+		
+		Session session = factory.getCurrentSession();
+		session.save(model);
+	}
+
+	@Override
+	@Transactional
+	public void save(ModelYear modelYear) {
+		
+		Session session = factory.getCurrentSession();
+		session.save(modelYear);
+	}
+
+	@Override
+	@Transactional
+	public Model findByName(String modelName) {
+		return super.findById(modelName);
 	}
 }

@@ -2,6 +2,7 @@ package com.dmcliver.performancecars.controllers;
 
 import static com.dmcliver.performancecars.EnumMetadata.getTag;
 import static com.dmcliver.performancecars.StringExtras.emptyStr;
+import static com.dmcliver.performancecars.domain.EngineAspiration.valueOf;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import java.io.FileNotFoundException;
@@ -24,11 +25,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dmcliver.performancecars.ResourceFileUtils;
+import com.dmcliver.performancecars.StringExtras;
 import com.dmcliver.performancecars.builders.LoggerBuilder;
 import com.dmcliver.performancecars.datalayer.MakeDAO;
 import com.dmcliver.performancecars.datalayer.ModelDAO;
 import com.dmcliver.performancecars.domain.EngineAspiration;
 import com.dmcliver.performancecars.domain.EngineType;
+import com.dmcliver.performancecars.domain.Make;
+import com.dmcliver.performancecars.domain.ModelYear;
+import com.dmcliver.performancecars.domain.ModelYearPK;
 import com.dmcliver.performancecars.models.VehicleModel;
 import com.dmcliver.performancecars.services.FileService;
 
@@ -44,6 +49,7 @@ public class ModelController {
 
 	@Autowired
 	public ModelController(MakeDAO makeDAO, ModelDAO modelDAO, FileService fileService, ResourceFileUtils fileUtils, LoggerBuilder logBuilder) {
+		
 		this.makeDAO = makeDAO;
 		this.modelDAO = modelDAO;
 		this.fileService = fileService;
@@ -53,6 +59,13 @@ public class ModelController {
 	
 	@RequestMapping(value = "/add", method = GET)
 	public String viewAdd(Model model) {
+		
+		buildModel(model);
+		model.addAttribute("vehicleModel", new VehicleModel());
+		return "addModel";
+	}
+
+	private void buildModel(Model model) {
 		
 		HashMap<String,String> engines = new HashMap<String,String>();
 		for (EngineType engineType : EngineType.values()) engines.put(engineType.name(), getTag(engineType));
@@ -65,9 +78,6 @@ public class ModelController {
 		model.addAttribute("engines", engines);
 		model.addAttribute("aspiration", aspiration);
 		model.addAttribute("makes", makes);
-		model.addAttribute("vehicleModel", new VehicleModel());
-		
-		return "addModel";
 	}
 	
 	@RequestMapping(value = "/getAll/{makeName}", method = GET) 
@@ -77,23 +87,55 @@ public class ModelController {
 	}
 	
 	@RequestMapping(value = "/add", method = POST)
-	public String add(@Valid @ModelAttribute("vehicleModel") VehicleModel vehicle, BindingResult result, @RequestParam(value = "carPic", required = false) MultipartFile pic, Model model) {
+	public String add(@Valid @ModelAttribute("vehicleModel") VehicleModel vehicle, BindingResult result, @RequestParam(value = "carPic", required = false) MultipartFile pic, Model model) throws IOException {
 	
-		if(result.hasErrors())
-			return "addModel";
+		if(result.hasErrors()) {
 		
-		fileService.saveFile(pic);
-		String filePath = emptyStr;
-		try {
-			filePath = fileUtils.getImageFilePathFromProperties("resources.properties", "resource_files.dir");
-		} 
-		catch (FileNotFoundException ex) {
-			logger.warn("could not get resource props with key resource_files.dir", ex);
-		} 
-		catch (IOException ex) {
-			logger.warn("could not get resource props with key resource_files.dir", ex);
+			buildModel(model);
+			return "addModel";
 		}
 		
+		fileService.saveFile(pic);
+		
+		com.dmcliver.performancecars.domain.Model modelToBeSaved = null;
+		if(!vehicle.isExistingModel()) 
+			modelToBeSaved = createNewModel(vehicle);
+		else 
+			modelToBeSaved = modelDAO.findByName(vehicle.getModelName());
+		
+		int year = vehicle.getCentury() * 100 + vehicle.getDecade() * 10 + vehicle.getYear();
+
+		ModelYear modelYear = buildModelDetails(vehicle, modelToBeSaved, year, pic.getOriginalFilename());
+		modelDAO.save(modelYear);
+		
 		return "redirect:/home/index";
+	}
+
+	private com.dmcliver.performancecars.domain.Model createNewModel(VehicleModel vehicle) {
+		
+		com.dmcliver.performancecars.domain.Model modelToBeSaved;
+		Make make = makeDAO.findByName(vehicle.getSelectedMake());
+		modelToBeSaved = new com.dmcliver.performancecars.domain.Model(vehicle.getModelName(), make);
+		modelDAO.save(modelToBeSaved);
+		return modelToBeSaved;
+	}
+
+	private ModelYear buildModelDetails(VehicleModel vehicle, com.dmcliver.performancecars.domain.Model modelToBeSaved, int year, String fileName) {
+		
+		String filePath = emptyStr;
+		try {
+			filePath = fileUtils.getImageFilePathFromProperties("resources.properties", "resource_files.url");
+		}
+		catch (IOException ex) {
+			logger.error("Couldnt retrieve file url", ex);
+		}
+		
+		ModelYear modelYear = new ModelYear(modelToBeSaved, vehicle.getEngineSize(), new ModelYearPK(vehicle.getModelName(), year)) ;
+		modelYear.setEngineAspiration(valueOf(vehicle.getEngineAspiration()));
+		modelYear.setEngineType(EngineType.valueOf(vehicle.getEngineType()));
+		modelYear.setQuarterMileTime(vehicle.getQuarterMileTime());
+		modelYear.setTimeToOneHundred(vehicle.getTimeToOneHundred());
+		modelYear.setFilePath(filePath + fileName);
+		return modelYear;
 	}
 }

@@ -25,15 +25,15 @@
 			</f:select>
 			
 			<div>
-				Existing model:<input ng-disabled="!(modelsRelatedToMake && modelsRelatedToMake.length)" type="radio" id="useExistingModel" name="useExistingModel" value="true" ng-click="toggle($event)" ng-checked="!newModel" /> 
+				Existing model:<input ng-disabled="!(modelsRelatedToMake && modelsRelatedToMake.length)" type="radio" id="existingModel" name="existingModel" value="true" ng-click="toggle($event)" ng-checked="!newModel" /> 
 				<select ng-disabled="newModel" name="modelName" id="modelName" ng-model="selectedModel">
-					<option ng-repeat="m in modelsRelatedToMake" value="{{c.name}}">{{c.name}}</option>
+					<option ng-repeat="m in modelsRelatedToMake" value="{{m.name}}">{{m.name}}</option>
 				</select>
 			</div>
 			New model:
-			<f:radiobutton path="useExistingModel" value="false" ng-click="toggle($event)" ng-checked="newModel" />
+			<f:radiobutton path="existingModel" value="false" ng-click="toggle($event)" ng-checked="newModel" />
 			<div>
-				name:<f:input ng-disabled="!newModel" path="modelName" />
+				name:<f:input ng-disabled="!newModel" path="modelName" /><f:errors path="modelName"/>
 				<br />
 			</div>
 			size:

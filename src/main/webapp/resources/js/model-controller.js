@@ -7,7 +7,7 @@ angular.module("FastFoursApp",[])
 		   
 		   $scope.toggle = function(e) {
 			 
-			   if("true" == e.srcElement.value)
+			   if("true" == e.target.value)
 				   $scope.newModel = false;
 			   else
 				   $scope.newModel = true;
@@ -18,8 +18,18 @@ angular.module("FastFoursApp",[])
 			   $http.get(root + "/models/getAll/" + $scope.selectedMake, {cache:true}).success(function(data, status){
 				   
 				  $scope.modelsRelatedToMake = data;
+				   removeBlankItem("#modelName");
 			   });
 		   };
+		   
+		   var firstItem = angular.element("#selectedMake")
+		   						  .children()
+		   						  .first();
+		   if(firstItem) {
+			   
+			   $scope.selectedMake = firstItem.text();
+			   $scope.getModels();
+		   }
 	   });
 
 	function getRoot() {
@@ -31,8 +41,13 @@ angular.module("FastFoursApp",[])
 	angular.element(document).ready(function() {
 
 		angular.bootstrap(document, ['FastFoursApp']);
-		angular.element("#selectedMake")
-			   .children()
-			   .filter(function(){ return angular.element(this).text() === ""; })
-			   .remove();
+		removeBlankItem("#selectedMake");
     });
+	
+	function removeBlankItem(id){
+		
+		angular.element(id)
+ 		  	   .children()
+ 		  	   .filter(function(){ return angular.element(this).text() === ""; })
+ 		  	   .remove();
+	}

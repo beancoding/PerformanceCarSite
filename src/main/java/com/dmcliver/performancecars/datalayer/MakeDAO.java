@@ -8,4 +8,5 @@ public interface MakeDAO {
 
 	List<?> findAll();
 	void save(Make make);
+	Make findByName(String selectedMake);
 }

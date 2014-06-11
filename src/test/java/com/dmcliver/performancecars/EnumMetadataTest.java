@@ -1,4 +1,4 @@
-package com.dmcliver.perfomancecars;
+package com.dmcliver.performancecars;
 
 import static com.dmcliver.performancecars.EnumMetadata.getTag;
 import static com.dmcliver.performancecars.domain.EngineAspiration.naturallyAspirated;

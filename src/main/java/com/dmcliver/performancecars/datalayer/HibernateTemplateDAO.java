@@ -1,5 +1,6 @@
 package com.dmcliver.performancecars.datalayer;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -28,5 +29,13 @@ public abstract class HibernateTemplateDAO<T> {
 		
 		Session session = sessionFactory.getCurrentSession();
 		session.save(entity);
+	}
+
+	@Transactional
+	@SuppressWarnings("unchecked")
+	public T findById(Serializable id) {
+		
+		Session session = sessionFactory.getCurrentSession();
+		return (T)session.get(entityType, id);
 	}
 }

@@ -35,7 +35,7 @@ public class FileServiceImpl implements FileService {
 			
 			if(isNullOrEmpty(name)) return;
 
-			String path = fileUtils.getImageFilePathFromProperties("resource.properties","resource_files.dir");
+			String path = fileUtils.getImageFilePathFromProperties("resources.properties", "resource_files.dir");
 			String fullpath = path + name;
 			
 			if(fileUtils.fileExists(fullpath));
@@ -47,6 +47,9 @@ public class FileServiceImpl implements FileService {
 		} 
 		catch (IOException ex) {
 			logger.error("Could not write image file to disk", ex);
+		}
+		catch(Exception ex){
+			logger.error("File resource error", ex);
 		}
 		finally{
 			

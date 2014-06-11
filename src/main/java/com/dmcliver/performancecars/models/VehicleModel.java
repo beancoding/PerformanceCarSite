@@ -19,7 +19,7 @@ public class VehicleModel {
 	private int century = 20;
 	private int decade = 1;
 	private int year = 1;
-	private boolean useExistingModel = true;
+	private boolean existingModel = true;
 	private String selectedMake;
 	
 	@NotBlank(message = "*The model name cannot be blank")
@@ -88,17 +88,17 @@ public class VehicleModel {
 		this.year = year;
 	}
 	
-	public boolean isUseExistingModel() {
-		return useExistingModel;
-	}
-	public void setUseExistingModel(boolean useExistingModel) {
-		this.useExistingModel = useExistingModel;
-	}
-	
 	public String getSelectedMake() {
 		return selectedMake;
 	}
 	public void setSelectedMake(String selectedMake) {
 		this.selectedMake = selectedMake;
+	}
+	
+	public boolean isExistingModel() {
+		return existingModel;
+	}
+	public void setExistingModel(boolean existingModel) {
+		this.existingModel = existingModel;
 	}
 }

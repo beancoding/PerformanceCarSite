@@ -1,24 +1,35 @@
 package com.dmcliver.performancecars.domain;
 
+import static com.dmcliver.performancecars.EnumMetadata.getTag;
+
+import java.math.BigDecimal;
+
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "ModelYear")
 public class ModelYear {
 
-	private Make make;
 	private Model model;
 	private ModelYearPK modelYearPK;
+	private BigDecimal engineSize;
+	private EngineType engineType;
+	private EngineAspiration engineAspiration;	
+	private BigDecimal quarterMileTime;
+	private BigDecimal timeToOneHundred;
+	private String filePath;
 	
-	public ModelYear(Model model, ModelYearPK modelYearPK, Make make) {
+	public ModelYear(Model model, BigDecimal engineSize, ModelYearPK modelYearPK) {
 		
 		this.model = model;
+		this.engineSize = engineSize;
 		this.modelYearPK = modelYearPK;
-		this.make = make;
 	}
 	
 	public ModelYear() {}
@@ -39,13 +50,57 @@ public class ModelYear {
 	public void setModelYearPK(ModelYearPK modelYearPK) {
 		this.modelYearPK = modelYearPK;
 	}
-
-	@ManyToOne
-	@JoinColumn(name = "MakeId", nullable = false)
-	public Make getMake() {
-		return make;
+	
+	@Column(name = "EngineSize", nullable = false)
+	public BigDecimal getEngineSize() {
+		return engineSize;
 	}
-	public void setMake(Make make) {
-		this.make = make;
+	public void setEngineSize(BigDecimal engineSize) {
+		this.engineSize = engineSize;
+	}
+	
+	@Column(name = "EngineType", nullable = false)
+	public EngineType getEngineType() {
+		return engineType;
+	}
+	public void setEngineType(EngineType engineType) {
+		this.engineType = engineType;
+	}
+	
+	@Column(name = "EngineAspiration", nullable = true)
+	public EngineAspiration getEngineAspiration() {
+		return engineAspiration;
+	}
+	public void setEngineAspiration(EngineAspiration engineAspiration) {
+		this.engineAspiration = engineAspiration;
+	}
+	
+	@Column(name = "QuarterMile", nullable = true)
+	public BigDecimal getQuarterMileTime() {
+		return quarterMileTime;
+	}
+	public void setQuarterMileTime(BigDecimal quarterMileTime) {
+		this.quarterMileTime = quarterMileTime;
+	}
+	
+	@Column(name = "TimeToOneHundred", nullable = true)
+	public BigDecimal getTimeToOneHundred() {
+		return timeToOneHundred;
+	}
+	public void setTimeToOneHundred(BigDecimal timeToOneHundred) {
+		this.timeToOneHundred = timeToOneHundred;
+	}
+	
+	@Column(name = "FilePath")
+	public String getFilePath() {
+		return filePath;
+	}
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+	
+	@Transient
+	public String engineAspirationTag(){
+		return getTag(engineAspiration);
 	}
 }

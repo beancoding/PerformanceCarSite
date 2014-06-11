@@ -1,7 +1,5 @@
-package com.dmcliver.perfomancecars.domain;
+package com.dmcliver.performancecars.domain;
 
-import static com.dmcliver.performancecars.domain.EngineAspiration.twinTurbo;
-import static com.dmcliver.performancecars.domain.EngineType.straightSix;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -51,8 +49,6 @@ public class ModelYearTest {
 		assertNotNull("Model year is null", actualModelYear);
 		assertNotNull("Model year pk is null", actualModelYearPk);
 		assertNotNull("Actual model is null", actualModel);
-		assertNotNull("Make is null", actualModelYear.getMake());
-		assertThat("Model year did not match expected result", actualModelYear.getMake().getName(), is(makeName));
 		assertThat("Model year did not match expected result", actualModelYearPk.getYear(), is(expectedYear));
 		assertThat("Model name did not match expected result", actualModel.getName(), is(expectedModelName));
 	}
@@ -63,7 +59,7 @@ public class ModelYearTest {
 		
 		Make make = buildMake(session, cnty, makeName);
 		Model model = buildModelWithName(session, make, modelName);
-		ModelYear expectedModelYear = buildModelYear(year, session, model, make);
+		ModelYear expectedModelYear = buildModelYear(year, session, model);
 		
 		return expectedModelYear;
 	}
@@ -80,16 +76,13 @@ public class ModelYearTest {
 		Model m = new Model();
 		m.setName(name);
 		m.setMake(mk);
-		m.setEngineSize(new BigDecimal(3.6));
-		m.setEngineAspiration(twinTurbo);
-		m.setEngineType(straightSix);
 		session.save(m);
 		return m;
 	}
 	
-	private ModelYear buildModelYear(final int year, Session session, Model m, Make make) {
+	private ModelYear buildModelYear(final int year, Session session, Model m) {
 		
-		ModelYear my = new ModelYear(m, new ModelYearPK(m.getName(), year), make);
+		ModelYear my = new ModelYear(m, new BigDecimal(2), new ModelYearPK(m.getName(), year));
 		session.save(my);
 		return my;
 	}

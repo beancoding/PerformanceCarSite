@@ -1,4 +1,4 @@
-package com.dmcliver.perfomancecars;
+package com.dmcliver.performancecars;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

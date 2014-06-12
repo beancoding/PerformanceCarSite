@@ -17,9 +17,8 @@ app.factory('TreeFactory',function(){
 		
 		$('#treeItems01').on("changed.jstree", function (e, data) {
 	
-							  console.log((data.selected[0]).constructor === String);
-							  if(tree.onItemSelectedListener != null)
-								  tree.onItemSelectedListener(data.selected[0]);
+							  if(tree.onItemSelectedListener != null && data.node.original && data.node.original.level === "Model")
+								  tree.onItemSelectedListener(data.selected[0], data.node.parent);
 						})
 						.jstree({
 							'core' : {

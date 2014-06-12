@@ -15,7 +15,7 @@ angular.module("FastFoursApp",[])
 		   
 		   $scope.getModels = function() {
 			   
-			   $http.get(root + "/models/getAll/" + $scope.selectedMake, {cache:true}).success(function(data, status){
+			   $http.get(root + "/models/getAll/" + $scope.selectedMake).success(function(data, status){
 				   
 				  $scope.modelsRelatedToMake = data;
 				   removeBlankItem("#modelName");

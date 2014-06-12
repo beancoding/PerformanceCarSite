@@ -86,6 +86,18 @@ public class ModelController {
 		return modelDAO.findAll(makeName); 
 	}
 	
+	@RequestMapping(value = "/get/{modelName}", method = GET)
+	public @ResponseBody ModelYear get(@PathVariable("modelName") String modelName, @RequestParam("year") String year){
+		
+		int modelYear = 0;
+		try {
+			modelYear = Integer.parseInt(year);
+		} catch (NumberFormatException ex) {}
+		
+		ModelYear model = modelDAO.findByNameAndYear(modelName, modelYear);
+		return model == null ? new ModelYear() : model;
+	}
+	
 	@RequestMapping(value = "/add", method = POST)
 	public String add(@Valid @ModelAttribute("vehicleModel") VehicleModel vehicle, BindingResult result, @RequestParam(value = "carPic", required = false) MultipartFile pic, Model model) throws IOException {
 	

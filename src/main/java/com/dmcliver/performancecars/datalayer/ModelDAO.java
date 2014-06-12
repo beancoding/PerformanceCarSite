@@ -11,4 +11,7 @@ public interface ModelDAO {
 	void save(Model model);
 	void save(ModelYear modelYear);
 	Model findByName(String modelName);
+	List<Integer> findYearsByName(String id);
+	List<String> findByMakeAndYear(String parent, int year);
+	ModelYear findByNameAndYear(String modelName, int modelYear);
 }

@@ -15,6 +15,7 @@ import com.dmcliver.performancecars.builders.LoggerBuilder;
 public class HomeController {
 	
 	private Logger logger;
+	
 	@Autowired
 	public HomeController(LoggerBuilder logBuilder) {
 		logger = logBuilder.build(HomeController.class);
@@ -23,7 +24,7 @@ public class HomeController {
 	@RequestMapping(value = "/index", method = GET)
 	public String index(Model model) {
 		
-		logger.info("called index method");
+		logger.info("index method called");
 		return "homeIndex";
 	}
 }

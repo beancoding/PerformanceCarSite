@@ -103,4 +103,10 @@ public class ModelYear {
 	public String engineAspirationTag(){
 		return getTag(engineAspiration);
 	}
+	
+	@Override
+	@Transient
+	public String toString() {
+		return getClass().getSimpleName();
+	}
 }

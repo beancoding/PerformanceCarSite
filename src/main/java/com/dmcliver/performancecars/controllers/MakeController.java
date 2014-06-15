@@ -5,17 +5,17 @@ import static ch.lambdaj.Lambda.project;
 import static com.dmcliver.performancecars.Constants.addMake;
 import static com.dmcliver.performancecars.StringExtras.equalIgnoreCase;
 import static com.dmcliver.performancecars.StringExtras.isNullOrEmpty;
-import static java.util.Arrays.asList;
+import static java.util.ResourceBundle.getBundle;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,7 +32,6 @@ import com.dmcliver.performancecars.datalayer.MakeDAO;
 import com.dmcliver.performancecars.datalayer.ModelDAO;
 import com.dmcliver.performancecars.domain.Country;
 import com.dmcliver.performancecars.domain.Make;
-import com.dmcliver.performancecars.domain.ModelYear;
 import com.dmcliver.performancecars.models.MakeViewModel;
 import com.dmcliver.performancecars.models.TreeModel;
 
@@ -119,16 +118,39 @@ public class MakeController {
 		try {
 			country = countryDAO.findById(formData.getCountriesId());
 		} 
+		catch (IllegalArgumentException ex) {
+
+			logger.error("Continent exception", ex);
+			result.reject("ContinentIdGenErr", "*Please select a valid continent");
+			getContinents(model);
+			return addMake;
+		}
 		catch (Exception ex) {
 
-			result.reject("ContinentIdGenErr", "*Please select a valid continent");
+			logger.error("Continent exception", ex);
+			result.reject("ContinentIdGenErr", getBundle("messages").getString("error.unexpected"));
 			getContinents(model);
 			return addMake;
 		}
 		
 		Make make = new Make(formData.getMakeName(), country);
-		makeDAO.save(make);
-		
+		try {
+			makeDAO.save(make);
+		}
+		catch (DataIntegrityViolationException ex) {
+			
+			logger.error("Saving make error", ex);
+			result.reject("SaveMakeErr","*A make with that name already exists");
+			getContinents(model);
+			return addMake;
+		}
+		catch(Exception ex) {
+			
+			logger.error("Saving make error", ex);
+			result.reject("SaveMakeErr", getBundle("messages").getString("error.unexpected"));
+			getContinents(model);
+			return addMake;
+		}
 		return "redirect:/home/index";
 	}
 	

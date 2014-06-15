@@ -100,7 +100,7 @@ public class ModelYear {
 	}
 	
 	@Transient
-	public String engineAspirationTag(){
+	public String getEngineAspirationTag(){
 		return getTag(engineAspiration);
 	}
 	

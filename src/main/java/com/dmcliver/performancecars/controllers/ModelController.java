@@ -2,18 +2,19 @@ package com.dmcliver.performancecars.controllers;
 
 import static com.dmcliver.performancecars.EnumMetadata.getTag;
 import static com.dmcliver.performancecars.StringExtras.emptyStr;
+import static com.dmcliver.performancecars.StringExtras.isNullOrEmpty;
 import static com.dmcliver.performancecars.domain.EngineAspiration.valueOf;
+import static java.lang.Integer.parseInt;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,7 +26,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dmcliver.performancecars.ResourceFileUtils;
-import com.dmcliver.performancecars.StringExtras;
 import com.dmcliver.performancecars.builders.LoggerBuilder;
 import com.dmcliver.performancecars.datalayer.MakeDAO;
 import com.dmcliver.performancecars.datalayer.ModelDAO;
@@ -91,10 +91,11 @@ public class ModelController {
 		
 		int modelYear = 0;
 		try {
-			modelYear = Integer.parseInt(year);
+			modelYear = parseInt(year);
 		} catch (NumberFormatException ex) {}
 		
 		ModelYear model = modelDAO.findByNameAndYear(modelName, modelYear);
+		
 		return model == null ? new ModelYear() : model;
 	}
 	
@@ -110,17 +111,51 @@ public class ModelController {
 		fileService.saveFile(pic);
 		
 		com.dmcliver.performancecars.domain.Model modelToBeSaved = null;
-		if(!vehicle.isExistingModel()) 
-			modelToBeSaved = createNewModel(vehicle);
+		if(!vehicle.isExistingModel()) {
+			
+			try {
+				modelToBeSaved = createNewModel(vehicle);
+			}
+			catch (DataIntegrityViolationException ex) {
+				
+				buildErrorMessage(result, model, ex, "*There is already an existing model select it from the dropdown");
+				return "addModel";
+			}
+			catch(Exception ex) {
+				
+				buildErrorMessage(result, model, ex, "*An unexplained error occured please try again and/or consult your admin");
+				return "addModel";
+			}
+		}
 		else 
 			modelToBeSaved = modelDAO.findByName(vehicle.getModelName());
 		
 		int year = vehicle.getCentury() * 100 + vehicle.getDecade() * 10 + vehicle.getYear();
 
 		ModelYear modelYear = buildModelDetails(vehicle, modelToBeSaved, year, pic.getOriginalFilename());
-		modelDAO.save(modelYear);
+		try {
+			modelDAO.save(modelYear);
+		}
+		catch (DataIntegrityViolationException ex) {
+			
+			buildErrorMessage(result, model, ex, "*There is already an existing model with the same year");
+			return "addModel";
+		}
+		catch(Exception ex) {
+			
+			
+			buildErrorMessage(result, model, ex, "*An unexplained error occured please try again and/or consult your admin");
+			return "addModel";
+		}
 		
 		return "redirect:/home/index";
+	}
+
+	private void buildErrorMessage(BindingResult result, Model model, Exception ex, String defaultMessage) {
+		
+		logger.error("Error creating new model", ex);
+		result.reject("CreateNewModelErr", defaultMessage);
+		buildModel(model);
 	}
 
 	private com.dmcliver.performancecars.domain.Model createNewModel(VehicleModel vehicle) {
@@ -147,7 +182,8 @@ public class ModelController {
 		modelYear.setEngineType(EngineType.valueOf(vehicle.getEngineType()));
 		modelYear.setQuarterMileTime(vehicle.getQuarterMileTime());
 		modelYear.setTimeToOneHundred(vehicle.getTimeToOneHundred());
-		modelYear.setFilePath(filePath + fileName);
+		if(!emptyStr.equals(filePath) && !isNullOrEmpty(fileName))
+			modelYear.setFilePath(filePath + fileName);
 		return modelYear;
 	}
 }

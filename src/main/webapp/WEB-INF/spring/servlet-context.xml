@@ -21,11 +21,15 @@
 	
 	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 	    <!-- one of the properties available; the maximum file size in bytes -->
-	    <beans:property name="maxUploadSize" value="500000"/>
+	    <beans:property name="maxUploadSize" value="825000"/>
 	</beans:bean>
 	
 	<context:component-scan base-package="com.dmcliver.performancecars" />
 	
 	<context:annotation-config/>
+	
+	<beans:bean class="org.springframework.context.support.ResourceBundleMessageSource" id="messageSource">
+		<beans:property name="basename" value="messages" />
+	</beans:bean>
 	
 </beans:beans>

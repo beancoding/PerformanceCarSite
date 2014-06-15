@@ -5,7 +5,6 @@ app.controller('TreeController', function ($scope, $http, TreeFactory) {
 		
 		var root = getRoot();
 		$http.get(root + "/models/get/" + itemId + "?year=" + year).success(function(data, status){
-			
 			$scope.modelData = data;
 		});
 	}

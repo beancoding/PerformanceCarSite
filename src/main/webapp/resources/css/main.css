@@ -1,0 +1,61 @@
+body{
+	 font-family:tahoma;
+	 background-size:1400px 735px;
+	 background-repeat: no-repeat;
+}
+
+h1{
+	color:white;
+	margin-left:235px;
+	text-align:center;
+	height:45px;
+	width:960px;
+	background-color:rgba(0,0,0,0.3);
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	border:solid white 2px;
+}
+
+h1 > a {
+	text-decoration:none;
+}
+
+#sidebar{
+	float:left;
+	width:230px;
+	min-height:50px;
+}
+
+.err{
+	color:red;
+}
+
+#treeItems01{
+	background-color:rgba(0,0,0,0.3);
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	border:solid white 2px;
+	min-height:50px;
+	
+}
+
+#content{
+	position:absolute;
+	top:60px;
+	left:245px;
+	float:right;
+	width:960px;
+	min-height:570px;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	background-color:rgba(230,230,230,0.5);	
+}
+
+#contentBody{
+	margin-left:10px;
+	margin-top:10px;
+}
+
+a{
+	color:white;
+}
